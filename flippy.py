@@ -78,39 +78,35 @@ def runGame():
     mainBoard = getNewBoard()
 
     resetBoard(mainBoard)
-    showHints = False
-    turn = random.choice(['computer', 'player'])
+    #showHints = False
+    movepiece = None
+    #turn = random.choice(['computer', 'player'])
 
     # Draw the starting board and ask the player what color they want.
-    drawBoard(mainBoard)
+    drawBoard(mainBoard,movepiece)
     playerTile, computerTile = enterPlayerTile()
 
     # Make the Surface and Rect objects for the "New Game" and "Hints" buttons
     newGameSurf = FONT.render('New Game', True, TEXTCOLOR, TEXTBGCOLOR2)
     newGameRect = newGameSurf.get_rect()
     newGameRect.topright = (WINDOWWIDTH - 8, 10)
-    hintsSurf = FONT.render('Hints', True, TEXTCOLOR, TEXTBGCOLOR2)
+    ''' hintsSurf = FONT.render('Hints', True, TEXTCOLOR, TEXTBGCOLOR2)
     hintsRect = hintsSurf.get_rect()
-    hintsRect.topright = (WINDOWWIDTH - 8, 40)
+    hintsRect.topright = (WINDOWWIDTH - 8, 40)'''
 
     while True: # main game loop
         # Keep looping for player and computer's turns.
-        if turn == 'player':
+        if True: #turn == 'player':
             # Player's turn:
-            if getValidMoves(mainBoard, playerTile) == []:
+            '''if getValidMoves(mainBoard, playerTile) == []:
                 # If it's the player's turn but they
                 # can't move, then end the game.
-                break
+                break'''
             movexy = None
             while movexy == None:
                 # Keep looping until the player clicks on a valid space.
 
-                # Determine which board data structure to use for display.
-                if showHints:
-                    boardToDraw = getBoardWithValidMoves(mainBoard, playerTile)
-                else:
-                    boardToDraw = mainBoard
-
+                # Determine which board data structure to use for display
                 checkForQuit()
                 for event in pygame.event.get(): # event handling loop
                     if event.type == MOUSEBUTTONUP:
@@ -119,30 +115,32 @@ def runGame():
                         if newGameRect.collidepoint( (mousex, mousey) ):
                             # Start a new game
                             return True
-                        elif hintsRect.collidepoint( (mousex, mousey) ):
+                        ''' elif hintsRect.collidepoint( (mousex, mousey) ):
                             # Toggle hints mode
-                            showHints = not showHints
+                            showHints = not showHints'''
                         # movexy is set to a two-item tuple XY coordinate, or None value
                         movexy = getSpaceClicked(mousex, mousey)
                         if movexy != None and not isValidMove(mainBoard, playerTile, movexy[0], movexy[1]):
                             movexy = None
+                        if mainBoard[movexy[0]][movexy[1]] != EMPTY_SPACE:
+                            movepiece = movexy
 
                 # Draw the game board.
-                drawBoard(boardToDraw)
-                drawInfo(boardToDraw, playerTile, computerTile, turn)
+                drawBoard(mainBoard,movepiece)
+                #drawInfo(mainBoard, playerTile, computerTile, turn)
 
                 # Draw the "New Game" and "Hints" buttons.
                 DISPLAYSURF.blit(newGameSurf, newGameRect)
-                DISPLAYSURF.blit(hintsSurf, hintsRect)
+                #DISPLAYSURF.blit(hintsSurf, hintsRect)
 
                 MAINCLOCK.tick(FPS)
                 pygame.display.update()
 
             # Make the move and end the turn.
-            makeMove(mainBoard, playerTile, movexy[0], movexy[1], True)
+            '''makeMove(mainBoard, playerTile, movexy[0], movexy[1], True)
             if getValidMoves(mainBoard, computerTile) != []:
                 # Only set for the computer's turn if it can make a move.
-                turn = 'computer'
+                turn = 'computer' '''
 
         else:
             # Computer's turn:
@@ -152,12 +150,12 @@ def runGame():
                 break
 
             # Draw the board.
-            drawBoard(mainBoard)
-            drawInfo(mainBoard, playerTile, computerTile, turn)
+            drawBoard(mainBoard,movepiece)
+            #drawInfo(mainBoard, playerTile, computerTile, turn)
 
             # Draw the "New Game" and "Hints" buttons.
             DISPLAYSURF.blit(newGameSurf, newGameRect)
-            DISPLAYSURF.blit(hintsSurf, hintsRect)
+           # DISPLAYSURF.blit(hintsSurf, hintsRect)
 
             # Make it look like the computer is thinking by pausing a bit.
             pauseUntil = time.time() + random.randint(5, 15) * 0.1
@@ -165,14 +163,14 @@ def runGame():
                 pygame.display.update()
 
             # Make the move and end the turn.
-            x, y = getComputerMove(mainBoard, computerTile)
+            ''' x, y = getComputerMove(mainBoard, computerTile)
             makeMove(mainBoard, computerTile, x, y, True)
             if getValidMoves(mainBoard, playerTile) != []:
                 # Only set for the player's turn if they can make a move.
-                turn = 'player'
+                turn = 'player' '''
 
     # Display the final score.
-    drawBoard(mainBoard)
+    drawBoard(mainBoard,movepiece)
     scores = getScoreOfBoard(mainBoard)
 
     # Determine the text of the message to display.
@@ -253,7 +251,7 @@ def animateTileChange(tilesToFlip, tileColor, additionalTile):
         checkForQuit()
 
 
-def drawBoard(board):
+def drawBoard(board,movepiece):
     # Draw background of board.
     DISPLAYSURF.blit(BGIMAGE, BGIMAGE.get_rect())
 
@@ -294,9 +292,8 @@ def drawBoard(board):
                 else:
                     tileColor = TAN
                 pygame.draw.circle(DISPLAYSURF, tileColor, (centerx, centery), int(SPACESIZE / 2) - 4)
-            if board[x][y] == HINT_TILE:
-                pygame.draw.rect(DISPLAYSURF, HINTCOLOR, (centerx - 4, centery - 4, 8, 8))
-
+                if movepiece != None and movepiece [0] == x and movepiece [1] == y:
+                    pygame.draw.rect(DISPLAYSURF, HINTCOLOR, (centerx - 4, centery - 4, 8, 8))
 
 def getSpaceClicked(mousex, mousey):
     # Return a tuple of two integers of the board space coordinates where
@@ -366,6 +363,7 @@ def getNewBoard():
 def isValidMove(board, tile, xstart, ystart):
     # Returns False if the player's move is invalid. If it is a valid
     # move, returns a list of spaces of the captured pieces.
+    return True # TODO: fix to do valid checkers move
     if board[xstart][ystart] != EMPTY_SPACE or not isOnBoard(xstart, ystart):
         return False
 
@@ -417,13 +415,13 @@ def isOnBoard(x, y):
     return x >= 0 and x < BOARDWIDTH and y >= 0 and y < BOARDHEIGHT
 
 
-def getBoardWithValidMoves(board, tile):
+'''def getBoardWithValidMoves(board, tile):
     # Returns a new board with hint markings.
     dupeBoard = copy.deepcopy(board)
 
     for x, y in getValidMoves(dupeBoard, tile):
         dupeBoard[x][y] = HINT_TILE
-    return dupeBoard
+    return dupeBoard'''
 
 
 def getValidMoves(board, tile):
@@ -459,8 +457,8 @@ def enterPlayerTile():
     # Create the text.
    
    
-   
-
+    return [WHITE_CIRCLE,BLACK_CIRCLE]
+ 
     '''xSurf = BIGFONT.render('White', True, TEXTCOLOR, TEXTBGCOLOR1)
     xRect = xSurf.get_rect()
     xRect.center = (int(WINDOWWIDTH / 2) - 60, int(WINDOWHEIGHT / 2) + 40)
@@ -497,11 +495,11 @@ def makeMove(board, tile, xstart, ystart, realMove=False):
 
     board[xstart][ystart] = tile
 
-    if realMove:
+    '''if realMove:
         animateTileChange(tilesToFlip, tile, (xstart, ystart))
 
     for x, y in tilesToFlip:
-        board[x][y] = tile
+        board[x][y] = tile'''
     return True
 
 
