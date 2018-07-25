@@ -19,6 +19,8 @@ BOARDHEIGHT = 8 # how many rows of spaces on the game board
 WHITE_CIRCLE = 'WHITE_CIRCLE' # an arbitrary but unique value
 BLACK_CIRCLE= 'BLACK_CIRCLE' # an arbitrary but unique value
 EMPTY_SPACE = 'EMPTY_SPACE' # an arbitrary but unique value
+TILE1 = 'TILE1'
+TILE2 = 'TILE2'
 HINT_TILE = 'HINT_TILE' # an arbitrary but unique value
 ANIMATIONSPEED = 25 # integer from 1 to 100, higher is faster animation
 
@@ -74,6 +76,7 @@ def runGame():
 
     # Reset the board and game.
     mainBoard = getNewBoard()
+
     resetBoard(mainBoard)
     showHints = False
     turn = random.choice(['computer', 'player'])
@@ -254,31 +257,42 @@ def drawBoard(board):
     # Draw background of board.
     DISPLAYSURF.blit(BGIMAGE, BGIMAGE.get_rect())
 
-    # Draw grid lines of the board.
-    for x in range(BOARDWIDTH + 1):
-        # Draw the horizontal lines.
-        startx = (x * SPACESIZE) + XMARGIN
-        starty = YMARGIN
-        endx = (x * SPACESIZE) + XMARGIN
-        endy = YMARGIN + (BOARDHEIGHT * SPACESIZE)
-        pygame.draw.line(DISPLAYSURF, GRIDLINECOLOR, (startx, starty), (endx, endy))
-    for y in range(BOARDHEIGHT + 1):
-        # Draw the vertical lines.
-        startx = XMARGIN
-        starty = (y * SPACESIZE) + YMARGIN
-        endx = XMARGIN + (BOARDWIDTH * SPACESIZE)
-        endy = (y * SPACESIZE) + YMARGIN
-        pygame.draw.line(DISPLAYSURF, GRIDLINECOLOR, (startx, starty), (endx, endy))
+    
 
     # Draw the black & white tiles or hint spots.
+    
+                
+                
+    isWhite = True
+            
+    # Draw the black & white tiles or hint spots.
+    for x in range(BOARDWIDTH):
+        isWhite =  not isWhite
+        for y in range(BOARDHEIGHT): 
+            centerx, centery = translateBoardToPixelCoord(x, y)
+            #if board[x][y] == WHITE_CIRCLE or board[x][y] == BLACK_CIRCLE:
+             #   if board[x][y] == WHITE_CIRCLE:
+             #       tileColor = WHITE
+             #   else:
+              #      tileColor = BLACK
+             #   pygame.draw.circle(DISPLAYSURF, tileColor, (centerx, centery), int(SPACESIZE / 2) - 4)
+            if isWhite:
+                color = WHITE
+                
+            else:
+                color = BLACK
+            isWhite =  not isWhite
+                
+            pygame.draw.rect(DISPLAYSURF, color, (centerx - 25, centery - 25, 50, 50))
+            
     for x in range(BOARDWIDTH):
         for y in range(BOARDHEIGHT):
             centerx, centery = translateBoardToPixelCoord(x, y)
             if board[x][y] == WHITE_CIRCLE or board[x][y] ==BLACK_CIRCLE:
                 if board[x][y] == WHITE_CIRCLE:
-                    tileColor = WHITE
+                    tileColor = RED
                 else:
-                    tileColor = BLACK
+                    tileColor = TAN
                 pygame.draw.circle(DISPLAYSURF, tileColor, (centerx, centery), int(SPACESIZE / 2) - 4)
             if board[x][y] == HINT_TILE:
                 pygame.draw.rect(DISPLAYSURF, HINTCOLOR, (centerx - 4, centery - 4, 8, 8))
@@ -313,10 +327,31 @@ def resetBoard(board):
             board[x][y] = EMPTY_SPACE
 
     # Add starting pieces to the center
-    board[3][3] = WHITE_CIRCLE
-    board[3][4] =BLACK_CIRCLE
-    board[4][3] =BLACK_CIRCLE
-    board[4][4] = WHITE_CIRCLE
+    board[0][0] = WHITE_CIRCLE
+    board[0][2] = WHITE_CIRCLE
+    board[0][4] = WHITE_CIRCLE
+    board[0][6] = WHITE_CIRCLE
+    board[1][1] = WHITE_CIRCLE
+    board[1][3] = WHITE_CIRCLE
+    board[1][5] = WHITE_CIRCLE
+    board[1][7] = WHITE_CIRCLE
+    board[2][0] = WHITE_CIRCLE
+    board[2][2] = WHITE_CIRCLE
+    board[2][4] = WHITE_CIRCLE
+    board[2][6] = WHITE_CIRCLE
+    
+    board[5][1] = BLACK_CIRCLE
+    board[5][3] = BLACK_CIRCLE
+    board[5][5] = BLACK_CIRCLE
+    board[5][7] = BLACK_CIRCLE
+    board[6][0] = BLACK_CIRCLE
+    board[6][2] = BLACK_CIRCLE
+    board[6][4] = BLACK_CIRCLE
+    board[6][6] = BLACK_CIRCLE
+    board[7][1] = BLACK_CIRCLE
+    board[7][3] = BLACK_CIRCLE
+    board[7][5] = BLACK_CIRCLE
+    board[7][7] = BLACK_CIRCLE
 
 
 def getNewBoard():
@@ -426,13 +461,13 @@ def enterPlayerTile():
    
    
 
-    xSurf = BIGFONT.render('White', True, TEXTCOLOR, TEXTBGCOLOR1)
+    '''xSurf = BIGFONT.render('White', True, TEXTCOLOR, TEXTBGCOLOR1)
     xRect = xSurf.get_rect()
     xRect.center = (int(WINDOWWIDTH / 2) - 60, int(WINDOWHEIGHT / 2) + 40)
 
     oSurf = BIGFONT.render('Black', True, TEXTCOLOR, TEXTBGCOLOR1)
     oRect = oSurf.get_rect()
-    oRect.center = (int(WINDOWWIDTH / 2) + 60, int(WINDOWHEIGHT / 2) + 40)
+    oRect.center = (int(WINDOWWIDTH / 2) + 60, int(WINDOWHEIGHT / 2) + 40)'''
 
     while True:
         # Keep looping until the player has clicked on a color.
@@ -447,7 +482,7 @@ def enterPlayerTile():
 
         # Draw the screen.
         
-        DISPLAYSURF.blit(oSurf, oRect)
+        'DISPLAYSURF.blit(oSurf, oRect)'
         pygame.display.update()
         MAINCLOCK.tick(FPS)
 
