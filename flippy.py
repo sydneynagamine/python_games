@@ -36,6 +36,7 @@ BROWN      = (174,  94,   0)
 RED        = (203,  32,  39)
 TAN        = (222, 188, 153)
 PINK       = (255, 105, 180)
+BLUE       = (115, 194, 251)
 TEXTBGCOLOR1 = BRIGHTBLUE
 TEXTBGCOLOR2 = GREEN
 GRIDLINECOLOR = BLACK
@@ -152,12 +153,20 @@ def runGame():
                             else:
                                 mainBoard[movefromxy[0]][movefromxy[1]] = PLAYER2_CROWNED
                         isDone = True
+
                         #pygame.draw.circle(DISPLAYSURF, tileColor, (centerx, centery), int(SPACESIZE / 2) - 4)
 
                     # movexy is set to a two-item tuple XY coordinate, or None value
                     movexy = getSpaceClicked(mousex, mousey)
+                    
+                    if movexy != None and movefromxy[0] == movexy[0] and movefromxy[1] == movexy[1]:
+                        isDone = True
+                    
                     if movexy == None or not isValidMove(mainBoard, playerTile, movexy[0], movexy[1]) or mainBoard[movexy[0]][movexy[1]] != EMPTY_SPACE:
                         movexy = None
+                    
+                    
+                        
         if movexy != None:                
             mainBoard[movexy[0]][movexy[1]] = mainBoard[movefromxy[0]][movefromxy[1]]
             mainBoard[movefromxy[0]][movefromxy[1]] = EMPTY_SPACE
@@ -196,8 +205,10 @@ def drawBoard(board,movepiece):
                 else:
                     tileColor = WHITE
                 pygame.draw.circle(DISPLAYSURF, tileColor, (centerx, centery), int(SPACESIZE / 2) - 4)
+                pygame.draw.circle(DISPLAYSURF,BLACK, (centerx, centery), int(SPACESIZE / 2) - 4, 1)
+
                 if movepiece != None and movepiece [0] == x and movepiece [1] == y:
-                    pygame.draw.rect(DISPLAYSURF, RED, (centerx - 4, centery - 4, 8, 8))
+                    pygame.draw.circle(DISPLAYSURF, BLUE, (centerx, centery), int(SPACESIZE / 2) - 4, 3)
 
 def getSpaceClicked(mousex, mousey):
     # Return a tuple of two integers of the board space coordinates where
